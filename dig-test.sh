@@ -11,6 +11,7 @@ SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 SERVER="8.8.8.8"
 DOMAIN="google.com"
 TIMEOUT=1
+TIMEOUT_MS=1000
 INTERVAL=0.2
 LOG_FILE="dig-test-$(date +%Y%m%d-%H%M%S).log"
 REQUESTS=${1:-3000}  # or pass with arg
@@ -25,7 +26,9 @@ ok_count=0
 for ((i = 1; i <= REQUESTS; i++)); do
     START=$(date +%s%3N)
 
-    OUTPUT=$(dig @"$SERVER" "$DOMAIN" +tries=1 +time=$TIMEOUT +stats +noquestion +nocomments +nocmd +noauthority +noadditional 2>/dev/null)
+    # OUTPUT=$(dig @"$SERVER" "$DOMAIN" +tries=1 +time=$TIMEOUT +stats +noquestion +nocomments +nocmd +noauthority +noadditional 2>/dev/null)
+    OUTPUT=$(dig @"$SERVER" "$DOMAIN" +tries=1 +stats +noquestion +nocomments +nocmd +noauthority +noadditional 2>/dev/null)
+
     STATUS=$?
 
     END=$(date +%s%3N)
@@ -36,7 +39,7 @@ for ((i = 1; i <= REQUESTS; i++)); do
     if [ $STATUS -ne 0 ]; then
         echo "[$TIMESTAMP] ❌ TIMEOUT (${RTT}ms)" | tee -a "$LOG_FILE"
         ((timeout_count++))
-    elif [ $RTT -gt 1000 ]; then
+    elif [ $RTT -gt "$TIMEOUT_MS" ]; then
         echo "[$TIMESTAMP] ⚠️  SLOW RESPONSE (${RTT}ms)" | tee -a "$LOG_FILE"
         ((slow_count++))
     else
