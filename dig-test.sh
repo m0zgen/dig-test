@@ -7,7 +7,7 @@
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 
-# Конфигурация
+# Config
 SERVER="8.8.8.8"
 DOMAIN="google.com"
 TIMEOUT=1
@@ -48,7 +48,7 @@ for ((i = 1; i <= REQUESTS; i++)); do
     sleep $INTERVAL
 done
 
-# Итоговая статистика
+# Final stats
 echo "------------------------------------------" | tee -a "$LOG_FILE"
 echo "[RESULT] Finished $REQUESTS requests:" | tee -a "$LOG_FILE"
 echo "[RESULT] OK: $ok_count" | tee -a "$LOG_FILE"
